@@ -58,3 +58,5 @@ local.properties
 # bin build directories
 **/bin
 
+# vscode custom settings
+.vscode
