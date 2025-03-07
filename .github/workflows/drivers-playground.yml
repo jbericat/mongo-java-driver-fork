@@ -46,7 +46,7 @@ jobs:
         env:
           IMAGE_TAG: ts-java-5-3-1:5.3.1 # DEBUG: We are hardcoding this for simplicity sake, but using the actual tag shouldn't be hard
         with:
-          context: ./containers/java
+          context: containers/java/
           push: true
           tags: registry:5000/${{env.IMAGE_TAG}}
           build-args: --allow-insecure-entitlement security.insecure
