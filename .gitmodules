@@ -1,0 +1,3 @@
+[submodule "containers"]
+	path = containers
+	url = git@github.com:10gen/ts-docker.git

@@ -44,11 +44,9 @@ jobs:
         id: build-image
         uses: docker/build-push-action@v3
         env:
-          ECR_REGISTRY: ${{ steps.login-pf-aws-ecr.outputs.registry }}
-          ECR_REPOSITORY: ${{secrets.AWS_ECR_REPO}}
           IMAGE_TAG: ts-java-5-3-1:5.3.1 # DEBUG: We are hardcoding this for simplicity sake, but using the actual tag shouldn't be hard
         with:
-          context: .
+          context: ./containers/java
           push: true
           tags: registry:5000/${{env.IMAGE_TAG}}
           build-args: --allow-insecure-entitlement security.insecure
