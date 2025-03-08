@@ -46,16 +46,14 @@ jobs:
 
       - name: Update Driver Playground config
         run: |
-          IMAGE=ts-java-5-3-1;
-          VERSION=5.3.1;
+          IMAGE=ts-java
+          VERSION=5.3.1
           CONFIG_FILE=/home/mongodb/repos/drivers-playground-fork/config.yaml
           yq -yi ".langs.java.images += [{\"imageTag\": \"$VERSION\", \"imageName\": \"$IMAGE-${VERSION//./-}\"}]" "$CONFIG_FILE" &&
-          cat /home/mongodb/actions-runner/mount/config.yaml &&
-          ls -lah /home/mongodb
+          cat /home/mongodb/actions-runner/mount/config.yaml
 
-      # - run: restart Drivers Playground container
-
-      - run: echo "🍏 This job's status is ${{ job.status }}.
+      - name: Restart Drivers Playground container
+        run: docker restart drivers-playground
 
       - name: Build and push the tagged docker image to the PoC registry
         id: build-image
@@ -68,3 +66,5 @@ jobs:
           tags: 10.0.2.15:5000/${{ env.IMAGE_TAG }}
           build-args: --allow-insecure-entitlement security.insecure
           outputs: type=image,push=true,registry.insecure=true
+
+      - run: echo "🍏 This job's status is ${{ job.status }}.
