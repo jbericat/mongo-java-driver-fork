@@ -67,4 +67,4 @@ jobs:
           build-args: --allow-insecure-entitlement security.insecure
           outputs: type=image,push=true,registry.insecure=true
 
-      - run: echo "🍏 This job's status is ${{ job.status }}.
+      - run: echo "🍏 This job's status is ${{ job.status }}."
