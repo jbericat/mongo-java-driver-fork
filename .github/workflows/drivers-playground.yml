@@ -27,11 +27,11 @@ jobs:
         #   fetch-depth: 0     # Ensures full-clone
 
       - name: Clone ts-docker-fork into containers folder
-        run: --mount=type=ssh git clone git@github.com:jbericat/ts-docker-fork.git containers
-        # run: |
-        #   TARGET_DIR=containers
-        #   git -C $TARGET_DIR pull ||
-        #   git clone https://github.com/jbericat/ts-docker-fork.git $TARGET_DIR
+        # run: git clone git@github.com:jbericat/ts-docker-fork.git containers
+        run: |
+          TARGET_DIR=containers
+          git -C $TARGET_DIR pull ||
+          git clone git@github.com:jbericat/ts-docker-fork.git $TARGET_DIR
 
       - run: echo "🎉 Setup QEMU and Docker buildx."
 
