@@ -28,10 +28,12 @@ jobs:
 
       - name: Clone ts-docker-fork into containers folder
         run: git clone git@github.com:jbericat/ts-docker-fork.git containers
-        # run: |
-        #   TARGET_DIR=containers
-        #   git -C $TARGET_DIR pull ||
-        #   git clone git@github.com:jbericat/ts-docker-fork.git $TARGET_DIR && pwd
+        run: |
+          if [ ! -d "containers" ]; then
+            git clone git@github.com:jbericat/ts-docker-fork.git containers
+          else
+            echo "Directory already exists. Skipping clone."
+          fi
 
       - run: echo "🎉 Setup QEMU and Docker buildx."
 
