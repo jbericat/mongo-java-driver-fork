@@ -53,7 +53,7 @@ jobs:
           cat /home/mongodb/actions-runner/mount/config.yaml
 
       - name: Restart Drivers Playground container
-        run: docker restart drivers-playground
+        run: docker restart drivers_playground
 
       - name: Build and push the tagged docker image to the PoC registry
         id: build-image
