@@ -61,7 +61,7 @@ jobs:
         run: |
           IMAGE=ts-java-5-3-1;
           VERSION=5.3.1;
-          CONFIG_FILE=/home/mongodb/repos/drivers-playground-fork/config.yml
+          CONFIG_FILE=/home/mongodb/repos/drivers-playground-fork/config.yaml
           yq -yi ".langs.java.images += [{\"imageTag\": \"$VERSION\", \"imageName\": \"$IMAGE-${VERSION//./-}\"}]" "$CONFIG_FILE" &&
           cat /home/mongodb/actions-runner/mount/config.yaml &&
           ls -lah /home/mongodb
