@@ -44,6 +44,19 @@ jobs:
 
       - run: echo "🖥️ The workflow is now ready to test your code on the runner."
 
+      - name: Update Driver Playground config
+        run: |
+          IMAGE=ts-java-5-3-1;
+          VERSION=5.3.1;
+          CONFIG_FILE=/home/mongodb/repos/drivers-playground-fork/config.yaml
+          yq -yi ".langs.java.images += [{\"imageTag\": \"$VERSION\", \"imageName\": \"$IMAGE-${VERSION//./-}\"}]" "$CONFIG_FILE" &&
+          cat /home/mongodb/actions-runner/mount/config.yaml &&
+          ls -lah /home/mongodb
+
+      # - run: restart Drivers Playground container
+
+      - run: echo "🍏 This job's status is ${{ job.status }}.
+
       - name: Build and push the tagged docker image to the PoC registry
         id: build-image
         uses: docker/build-push-action@v3
@@ -55,15 +68,3 @@ jobs:
           tags: 10.0.2.15:5000/${{ env.IMAGE_TAG }}
           build-args: --allow-insecure-entitlement security.insecure
           outputs: type=image,push=true,registry.insecure=true
-
-      # Update Driver Playground config and restart container
-      - name: List mounted folder contents
-        run: |
-          IMAGE=ts-java-5-3-1;
-          VERSION=5.3.1;
-          CONFIG_FILE=/home/mongodb/repos/drivers-playground-fork/config.yaml
-          yq -yi ".langs.java.images += [{\"imageTag\": \"$VERSION\", \"imageName\": \"$IMAGE-${VERSION//./-}\"}]" "$CONFIG_FILE" &&
-          cat /home/mongodb/actions-runner/mount/config.yaml &&
-          ls -lah /home/mongodb
-
-      - run: echo "🍏 This job's status is ${{ job.status }}."
