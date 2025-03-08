@@ -58,6 +58,6 @@ jobs:
 
       # Update Driver Playground config and restart container
       - name: List mounted folder contents
-        run: ls -lah /home/mongodb/actions-runner/mounted-folder
+        run: ls -lah /home/mongodb/actions-runner/mount/config.yaml
 
       - run: echo "🍏 This job's status is ${{ job.status }}."
