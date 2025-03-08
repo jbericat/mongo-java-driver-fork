@@ -54,4 +54,8 @@ jobs:
           build-args: --allow-insecure-entitlement security.insecure
           outputs: type=image,push=true,registry.insecure=true
 
+      # Update Driver Playground config and restart container
+      - name: List mounted folder contents
+        run: ls -lah /home/mongodb/actions-runner/mounted-folder
+
       - run: echo "🍏 This job's status is ${{ job.status }}."
