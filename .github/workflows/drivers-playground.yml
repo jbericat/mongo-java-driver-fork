@@ -32,9 +32,11 @@ jobs:
         #   submodules: true  # Ensures submodules are pulled in
         #   fetch-depth: 0     # Ensures full-clone
 
-      - name: Extract version from tag
-        run: echo "VERSION=${GITHUB_REF_NAME#r}" >> $GITHUB_ENV
-        # Removes the "r" prefix from the tag (e.g., r5.3.1 -> 5.3.1) and sets it as an environment variable
+      - name: Extract Version from Tag
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/r}  # Extracts "5.3.1" from "r5.3.1"
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "VERSION_DASHED=$(echo $VERSION | sed 's/\./-/g')" >> $GITHUB_ENV
 
       - name: Clone ts-docker-fork into containers folder
         #run: git clone git@github.com:jbericat/ts-docker-fork.git containers
@@ -59,13 +61,13 @@ jobs:
 
       - name: Build and push the tagged docker image to the PoC registry
         id: build-image
-        env:
-          IMAGE_TAG: ts-java-${{ env.VERSION//./- }}:${{ env.VERSION }}  # Converts 5.3.1 -> ts-java-5-3-1:5.3.1
         uses: docker/build-push-action@v3
+        env:
+          IMAGE_TAG: ts-java-${{ env.VERSION_DASHED }}:${{ env.VERSION }}
         with:
           context: containers/java/
           push: true
-          tags: 10.0.2.15:5000/${{ env.IMAGE_TAG }} ## I haven't figured out how to use the host's DNS from the buildx container, just use the Linux VM's IP for the registry host instead of the DNS name.
+          tags: 10.0.2.15:5000/${{ env.IMAGE_TAG }}
           build-args: |
             DRIVER_VERSION=${{ env.VERSION }}
             --allow-insecure-entitlement security.insecure
@@ -73,9 +75,8 @@ jobs:
 
       - name: Update Driver Playground config
         run: |
-          IMAGE=ts-java
           CONFIG_FILE=/home/mongodb/repos/drivers-playground-fork/config.yaml
-          yq -yi ".langs.java.images += [{\"imageTag\": \"$VERSION\", \"imageName\": \"$IMAGE-${VERSION//./-}\"}]" "$CONFIG_FILE" &&
+          yq -yi ".langs.java.images += [{\"imageTag\": \"${{ env.VERSION }}\", \"imageName\": \"ts-java-${{ env.VERSION_DASHED }}\"}]" "$CONFIG_FILE" &&
           cat $CONFIG_FILE
         # Updates the config file dynamically with the correct version
 
