@@ -47,6 +47,32 @@ jobs:
 
       - run: echo "🖥️ The workflow is now ready to test your code on the runner."
 
+      - name: Build and push the tagged docker image to the PoC registry
+        id: build-image
+        uses: docker/build-push-action@v3
+        env:
+          IMAGE_TAG: ts-java-5-3-1:5.3.1 # DEBUG: Hardcoded for now, but can be dynamic
+          DRIVER_VERSION: 5.3.1 # Set your driver version here
+        with:
+          context: containers/java/
+          push: true
+          tags: 10.0.2.15:5000/${{ env.IMAGE_TAG }}
+          build-args: DRIVER_VERSION=${{ env.DRIVER_VERSION }}
+          allow: security.insecure
+          outputs: type=image,push=true,registry.insecure=true
+
+      # - name: Build and push the tagged docker image to the PoC registry
+      #   id: build-image
+      #   uses: docker/build-push-action@v3
+      #   env:
+      #     IMAGE_TAG: ts-java-5-3-1:5.3.1 # DEBUG: Hardcoded for now, but can be dynamic
+      #   with:
+      #     context: containers/java/
+      #     push: true
+      #     tags: 10.0.2.15:5000/${{ env.IMAGE_TAG }}
+      #     build-args: --allow-insecure-entitlement security.insecure
+      #     outputs: type=image,push=true,registry.insecure=true
+
       - name: Update Driver Playground config
         run: |
           IMAGE=ts-java
@@ -57,17 +83,5 @@ jobs:
 
       - name: Restart Drivers Playground container
         run: docker restart drivers_playground
-
-      - name: Build and push the tagged docker image to the PoC registry
-        id: build-image
-        uses: docker/build-push-action@v3
-        env:
-          IMAGE_TAG: ts-java-5-3-1:5.3.1 # DEBUG: Hardcoded for now, but can be dynamic
-        with:
-          context: containers/java/
-          push: true
-          tags: 10.0.2.15:5000/${{ env.IMAGE_TAG }}
-          build-args: --allow-insecure-entitlement security.insecure
-          outputs: type=image,push=true,registry.insecure=true
 
       - run: echo "🍏 This job's status is ${{ job.status }}."
