@@ -6,14 +6,7 @@ on:
   workflow_dispatch:
   push:
     tags:
-      - 'r[0-9]+.[0-9]+.[0-9]+'
-
-  # push:
-  #   # Trigger the action on push with a tag matching r*.*.* (excluding alpha/beta)
-  #   tags:
-  #     - r*.*.*
-  #     - '!**-alpha'
-  #     - '!**-beta'
+      - 'r[0-9]+.[0-9]+.[0-9]+' # Trigger the action on push with a tag matching r*.*.* (excluding alpha/beta)
 
 jobs:
   automated_builds:
@@ -27,9 +20,6 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
-        # with:
-        #   submodules: true  # Ensures submodules are pulled in
-        #   fetch-depth: 0     # Ensures full-clone
 
       - name: Extract Version from Tag
         run: |
@@ -43,7 +33,8 @@ jobs:
           if [ ! -d "containers" ]; then
             git clone git@github.com:jbericat/ts-docker-fork.git containers
           else
-            echo "Directory already exists. Skipping clone."
+            echo "Directory already exists. Pulling changes..."
+            cd containers && git pull && cd ..
           fi
 
       - run: echo "🎉 Setup QEMU and Docker buildx."
