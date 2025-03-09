@@ -5,10 +5,8 @@ on:
   # Trigger the action manually from the UI
   workflow_dispatch:
   push:
-    branches:
-      - main
     tags:
-      - '**'
+      - 'v[0-9]+.[0-9]+.[0-9]+'
 
   # push:
   #   # Trigger the action on push with a tag matching r*.*.* (excluding alpha/beta)
