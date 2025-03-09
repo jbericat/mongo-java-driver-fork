@@ -28,7 +28,6 @@ jobs:
           echo "VERSION_DASHED=$(echo $VERSION | sed 's/\./-/g')" >> $GITHUB_ENV
 
       - name: Clone ts-docker-fork into containers folder
-        #run: git clone git@github.com:jbericat/ts-docker-fork.git containers
         run: |
           if [ ! -d "containers" ]; then
             git clone git@github.com:jbericat/ts-docker-fork.git containers
@@ -57,7 +56,7 @@ jobs:
         with:
           context: containers/java/
           push: true
-          tags: 10.0.2.15:5000/${{ env.IMAGE_TAG }}
+          tags: 10.0.2.15:5000/${{ env.IMAGE_TAG }} # I haven't figured out how to use the host's DNS from the buildx container, just use the Linux VM's IP for the registry host instead of the DNS name.
           build-args: |
             DRIVER_VERSION=${{ env.VERSION }}
             --allow-insecure-entitlement security.insecure
@@ -68,7 +67,6 @@ jobs:
           CONFIG_FILE=/home/mongodb/repos/drivers-playground-fork/config.yaml
           yq -yi ".langs.java.images += [{\"imageTag\": \"${{ env.VERSION }}\", \"imageName\": \"ts-java-${{ env.VERSION_DASHED }}\"}]" "$CONFIG_FILE" &&
           cat $CONFIG_FILE
-        # Updates the config file dynamically with the correct version
 
       - name: Restart Drivers Playground container
         run: docker restart drivers_playground
