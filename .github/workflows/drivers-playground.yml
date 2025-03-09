@@ -22,13 +22,18 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
-        with:
-          submodules: true  # Ensures submodules are pulled in
-          fetch-depth: 0     # Ensures full-clone
+        # with:
+        #   submodules: true  # Ensures submodules are pulled in
+        #   fetch-depth: 0     # Ensures full-clone
 
       - name: Clone ts-docker-fork into containers folder
+        #run: git clone git@github.com:jbericat/ts-docker-fork.git containers
         run: |
-          git clone --depth=1 git@github.com:jbericat/ts-docker-fork.git containers
+          if [ ! -d "containers" ]; then
+            git clone git@github.com:jbericat/ts-docker-fork.git containers
+          else
+            echo "Directory already exists. Skipping clone."
+          fi
 
       - run: echo "🎉 Setup QEMU and Docker buildx."
 
@@ -47,13 +52,37 @@ jobs:
         uses: docker/build-push-action@v3
         env:
           IMAGE_TAG: ts-java-5-3-1:5.3.1 # DEBUG: Hardcoded for now, but can be dynamic
+          DRIVER_VERSION: 5.3.1 # Set your driver version here
         with:
           context: containers/java/
           push: true
-          tags: registry:5000/${{ env.IMAGE_TAG }}
-          build-args: --allow-insecure-entitlement security.insecure
+          tags: 10.0.2.15:5000/${{ env.IMAGE_TAG }}
+          build-args: |
+            DRIVER_VERSION=${{ env.DRIVER_VERSION }}
+            --allow-insecure-entitlement security.insecure
           outputs: type=image,push=true,registry.insecure=true
 
-      - run: echo "🍏 This job's status is ${{ job.status }}."
+      # - name: Build and push the tagged docker image to the PoC registry
+      #   id: build-image
+      #   uses: docker/build-push-action@v3
+      #   env:
+      #     IMAGE_TAG: ts-java-5-3-1:5.3.1 # DEBUG: Hardcoded for now, but can be dynamic
+      #   with:
+      #     context: containers/java/
+      #     push: true
+      #     tags: 10.0.2.15:5000/${{ env.IMAGE_TAG }}
+      #     build-args: --allow-insecure-entitlement security.insecure
+      #     outputs: type=image,push=true,registry.insecure=true
 
-## END
+      - name: Update Driver Playground config
+        run: |
+          IMAGE=ts-java
+          VERSION=5.3.1
+          CONFIG_FILE=/home/mongodb/repos/drivers-playground-fork/config.yaml
+          yq -yi ".langs.java.images += [{\"imageTag\": \"$VERSION\", \"imageName\": \"$IMAGE-${VERSION//./-}\"}]" "$CONFIG_FILE" &&
+          cat $CONFIG_FILE
+
+      - name: Restart Drivers Playground container
+        run: docker restart drivers_playground
+
+      - run: echo "🍏 This job's status is ${{ job.status }}."
