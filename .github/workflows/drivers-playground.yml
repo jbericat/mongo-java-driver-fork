@@ -56,7 +56,7 @@ jobs:
         with:
           context: containers/java/
           push: true
-          tags: registry:5000/${{ env.IMAGE_TAG }}
+          tags: localhost:5000/${{ env.IMAGE_TAG }}
           build-args: |
             DRIVER_VERSION=${{ env.DRIVER_VERSION }}
             --allow-insecure-entitlement security.insecure
