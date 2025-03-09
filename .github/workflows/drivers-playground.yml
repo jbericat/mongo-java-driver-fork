@@ -5,11 +5,17 @@ on:
   # Trigger the action manually from the UI
   workflow_dispatch:
   push:
-    # Trigger the action on push with a tag matching r*.*.* (excluding alpha/beta)
+    branches:
+      - main
     tags:
-      - r*.*.*
-      - '!**-alpha'
-      - '!**-beta'
+      - '**'
+
+  # push:
+  #   # Trigger the action on push with a tag matching r*.*.* (excluding alpha/beta)
+  #   tags:
+  #     - r*.*.*
+  #     - '!**-alpha'
+  #     - '!**-beta'
 
 jobs:
   automated_builds:
