@@ -5,10 +5,8 @@ on:
   # Trigger the action manually from the UI
   workflow_dispatch:
   push:
-    # branch:
-    #   - 'main'
-    # tags:
-    #   - '*'
+    tags:
+      - '*'
 
   # push:
   #   # Trigger the action on push with a tag matching r*.*.* (excluding alpha/beta)
@@ -19,7 +17,7 @@ on:
 
 jobs:
   automated_builds:
-    if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
+    # if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
     runs-on: self-hosted
     permissions:
       id-token: write
